@@ -72,12 +72,16 @@ set(BT_Source
         src/loggers/bt_file_logger.cpp
         src/loggers/bt_minitrace_logger.cpp
 
+        src/pythonnode.cpp
+
         3rdparty/tinyXML2/tinyxml2.cpp
         3rdparty/minitrace/minitrace.cpp
 )
-include_directories(include 3rdparty/)
 
-set(BEHAVIOR_TREE_LIBRARIES behavior_tree_core)
+find_package(PythonLibs REQUIRED)
+include_directories(include 3rdparty ${PYTHON_INCLUDE_DIRS})
+
+set(BEHAVIOR_TREE_LIBRARIES behavior_tree_core ${PYTHON_LIBRARIES})
 
 find_package(ZMQ)
 
@@ -90,6 +94,8 @@ if( ZMQ_FOUND )
 else()
     message(WARNING "ZeroMQ NOT found. Skipping the build of [PublisherZMQ] and [bt_recorder].")
 endif()
+
+
 
 ######################################################
 # LIBRARY
