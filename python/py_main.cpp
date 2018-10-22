@@ -1,8 +1,8 @@
 #include "python_node.h"
+#include  <list>
 
 const std::string script_text = R"(
 
-# define Action HelloPythonAction
 import BehaviorTree as BT
 
 class HelloPythonAction:
@@ -11,25 +11,38 @@ class HelloPythonAction:
         self.name = name
 
     def tick(self):
-        print("tick called.")
+        print("tick called from {}".format(self.name) )
         return BT.NodeStatus.SUCCESS
 
     def halt(self):
         print("halt called.")
 
+    @staticmethod
     def requiredNodeParameters():
         return [( "paramA", "1" ), ( "paramB", "2" )]
-
-myAction = HelloPythonAction("myAction")
-print(myAction.tick())
-
  )";
 
 int main()
 {
-  py::scoped_interpreter guard{};
+    using namespace py::literals;
+    py::scoped_interpreter guard{};
 
-  py::exec( script_text );
+    py::exec( script_text );
+    auto locals = py::dict("_instance_name"_a="myAction");
 
-  return 0;
+    py::exec( "_node_instance = HelloPythonAction(\"{_instance_name}\".format(**locals())) ",
+              py::globals(), locals);
+
+    py::exec( "_tick_result = _node_instance.tick()", py::globals(), locals );
+    std::cout << locals["_tick_result"].cast<BT::NodeStatus>() << std::endl;
+
+    py::exec( "_required_params = HelloPythonAction.requiredNodeParameters()", py::globals(), locals );
+    auto params = locals["_required_params"].cast<std::list<std::pair<std::string, std::string>>>();
+
+    for (const auto& p: params)
+    {
+        std::cout << p.first << " / " << p.second << std::endl;
+    }
+
+    return 0;
 }

@@ -31,6 +31,5 @@ PYBIND11_EMBEDDED_MODULE(BehaviorTree, m)
              [](NodeParameters &par) { return pybind11::make_key_iterator(par.begin(), par.end()); },
              pybind11::keep_alive<0, 1>() /* Essential: keep list alive while iterator exists */
       );
-  //------------------------------------------
 }
 
