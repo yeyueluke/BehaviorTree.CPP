@@ -72,8 +72,6 @@ set(BT_Source
         src/loggers/bt_file_logger.cpp
         src/loggers/bt_minitrace_logger.cpp
 
-        src/pythonnode.cpp
-
         3rdparty/tinyXML2/tinyxml2.cpp
         3rdparty/minitrace/minitrace.cpp
 )
@@ -111,6 +109,13 @@ target_link_libraries(behavior_tree_core dl)
 add_subdirectory(tools)
 add_subdirectory(sample_nodes)
 add_subdirectory(examples)
+
+add_executable(py_test
+    python/py_main.cpp
+    python/python_node.cpp
+    )
+
+target_link_libraries(py_test ${BEHAVIOR_TREE_LIBRARIES} )
 
 ######################################################
 # TESTS
