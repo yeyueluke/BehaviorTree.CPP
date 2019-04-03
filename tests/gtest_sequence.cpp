@@ -67,6 +67,34 @@ struct ComplexSequenceTest : testing::Test
     }
 };
 
+struct ReactiveSequenceTest : testing::Test
+{
+    BT::ReactiveSequence root;
+    BT::AsyncActionTest action_1;
+    BT::AsyncActionTest action_2;
+    BT::ConditionTestNode condition_1;
+    BT::ConditionTestNode condition_2;
+
+    ReactiveSequenceTest()
+      : root("root")
+      , action_1("action_1", milliseconds(100))
+      , action_2("action_1", milliseconds(100))
+      , condition_1("condition_1")
+      , condition_2("condition_2")
+    {
+        root.addChild(&condition_1);
+        root.addChild(&action_1);
+        root.addChild(&condition_2);
+        root.addChild(&action_2);
+
+    }
+    ~ReactiveSequenceTest()
+    {
+        haltAllActions(&root);
+    }
+};
+
+
 struct SequenceTripleActionTest : testing::Test
 {
     BT::SequenceNode root;
@@ -347,6 +375,50 @@ TEST_F(ComplexSequenceTest, ComplexSequenceConditions2ToFalse)
     ASSERT_EQ(NodeStatus::IDLE, condition_2.status());
     ASSERT_EQ(NodeStatus::IDLE, action_1.status());
 }
+
+TEST_F(ReactiveSequenceTest, ReactiveSequence)
+{
+    // actions take 100 ms, therefore a succesfull sequence should take 200 ms
+    BT::NodeStatus state = root.executeTick();
+    ASSERT_EQ(NodeStatus::RUNNING, state);
+
+    auto begin_time = std::chrono::steady_clock::now();
+    while( state == NodeStatus::RUNNING)
+    {
+        state = root.executeTick();
+        std::this_thread::sleep_for( milliseconds(5) );
+    }
+    auto end_time = std::chrono::steady_clock::now();
+    int elapsed_ms = std::chrono::duration_cast<milliseconds>(end_time - begin_time).count();
+
+    ASSERT_EQ(NodeStatus::SUCCESS, state);
+    ASSERT_GE( elapsed_ms, 200 );
+    ASSERT_LE( elapsed_ms, 220 );
+
+    //---------------------
+    root.halt();
+    // action_1 is executed, but action_2 isn't. Total expected time 100 ms
+    condition_2.setBoolean( false );
+
+    state = root.executeTick();
+    ASSERT_EQ(NodeStatus::RUNNING, state);
+
+    begin_time = std::chrono::steady_clock::now();
+    while( state == NodeStatus::RUNNING)
+    {
+        state = root.executeTick();
+        std::this_thread::sleep_for( milliseconds(5) );
+    }
+    end_time = std::chrono::steady_clock::now();
+    elapsed_ms = std::chrono::duration_cast<milliseconds>(end_time - begin_time).count();
+
+    ASSERT_EQ(NodeStatus::FAILURE, state);
+    ASSERT_GE( elapsed_ms, 100 );
+    ASSERT_LE( elapsed_ms, 120 );
+
+}
+
+
 
 TEST_F(SimpleSequenceWithMemoryTest, ConditionTrue)
 {

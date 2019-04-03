@@ -15,20 +15,34 @@
 namespace BT
 {
 
+void ReactiveSequence::halt()
+{
+    std::fill(is_asynch_child_.begin(), is_asynch_child_.end(), false );
+    ControlNode::halt();
+}
+
 NodeStatus ReactiveSequence::tick()
 {
+    is_asynch_child_.resize(childrenCount(), false);
     size_t success_count = 0;
     size_t running_count = 0;
 
     for (size_t index = 0; index < childrenCount(); index++)
     {
         TreeNode* current_child_node = children_nodes_[index];
+        if( is_asynch_child_[index] && current_child_node->status() == NodeStatus::SUCCESS )
+        {
+            success_count++;
+            continue; // skip already executed asynch children
+        }
+
         const NodeStatus child_status = current_child_node->executeTick();
 
         switch (child_status)
         {
             case NodeStatus::RUNNING:
             {
+                is_asynch_child_[index] = true;
                 running_count++;
                 haltChildren(index+1);
                 return NodeStatus::RUNNING;
@@ -36,7 +50,7 @@ NodeStatus ReactiveSequence::tick()
 
             case NodeStatus::FAILURE:
             {
-                haltChildren(0);
+                halt();
                 return NodeStatus::FAILURE;
             }
             case NodeStatus::SUCCESS:
@@ -53,7 +67,7 @@ NodeStatus ReactiveSequence::tick()
 
     if( success_count == childrenCount())
     {
-        haltChildren(0);
+        halt();
         return NodeStatus::SUCCESS;
     }
     return NodeStatus::RUNNING;
