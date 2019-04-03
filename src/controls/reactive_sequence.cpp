@@ -25,12 +25,12 @@ NodeStatus ReactiveSequence::tick()
 {
     is_asynch_child_.resize(childrenCount(), false);
     size_t success_count = 0;
-    size_t running_count = 0;
 
     for (size_t index = 0; index < childrenCount(); index++)
     {
         TreeNode* current_child_node = children_nodes_[index];
-        if( is_asynch_child_[index] && current_child_node->status() == NodeStatus::SUCCESS )
+        if( is_asynch_child_[index] &&
+            current_child_node->status() == NodeStatus::SUCCESS )
         {
             success_count++;
             continue; // skip already executed asynch children
@@ -43,7 +43,6 @@ NodeStatus ReactiveSequence::tick()
             case NodeStatus::RUNNING:
             {
                 is_asynch_child_[index] = true;
-                running_count++;
                 haltChildren(index+1);
                 return NodeStatus::RUNNING;
             }
@@ -65,12 +64,12 @@ NodeStatus ReactiveSequence::tick()
         }   // end switch
     } //end for
 
-    if( success_count == childrenCount())
+    if( success_count != childrenCount())
     {
-        halt();
-        return NodeStatus::SUCCESS;
+        throw LogicError("This is not supposed to happen");
     }
-    return NodeStatus::RUNNING;
+    halt();
+    return NodeStatus::SUCCESS;
 }
 
 

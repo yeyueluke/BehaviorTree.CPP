@@ -39,9 +39,12 @@ class ReactiveFallback : public ControlNode
     ReactiveFallback(const std::string& name):
       ControlNode(name, {}){}
 
+    virtual void halt() override;
+
   private:
 
     virtual BT::NodeStatus tick() override;
+    std::vector<bool> is_asynch_child_;
 };
 
 }

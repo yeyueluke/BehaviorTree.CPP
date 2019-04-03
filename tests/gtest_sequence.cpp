@@ -415,7 +415,6 @@ TEST_F(ReactiveSequenceTest, ReactiveSequence)
     ASSERT_EQ(NodeStatus::FAILURE, state);
     ASSERT_GE( elapsed_ms, 100 );
     ASSERT_LE( elapsed_ms, 120 );
-
 }
 
 

@@ -15,21 +15,35 @@
 namespace BT
 {
 
+void ReactiveFallback::halt()
+{
+    std::fill(is_asynch_child_.begin(), is_asynch_child_.end(), false );
+    ControlNode::halt();
+}
+
 NodeStatus ReactiveFallback::tick()
 {
+    is_asynch_child_.resize(childrenCount(), false);
     size_t failure_count = 0;
-    size_t running_count = 0;
 
     for (size_t index = 0; index < childrenCount(); index++)
     {
         TreeNode* current_child_node = children_nodes_[index];
         const NodeStatus child_status = current_child_node->executeTick();
 
+        if( is_asynch_child_[index] &&
+            current_child_node->status() == NodeStatus::FAILURE )
+        {
+            failure_count++;
+            continue; // skip already executed asynch children
+        }
+
         switch (child_status)
         {
             case NodeStatus::RUNNING:
             {
-                haltChildren(0);
+                is_asynch_child_[index] = true;
+                haltChildren(index+1);
                 return NodeStatus::RUNNING;
             }
 
@@ -40,7 +54,7 @@ NodeStatus ReactiveFallback::tick()
 
             case NodeStatus::SUCCESS:
             {
-                haltChildren(0);
+                halt();
                 return NodeStatus::SUCCESS;
             }
 
@@ -51,13 +65,12 @@ NodeStatus ReactiveFallback::tick()
         }   // end switch
     } //end for
 
-    if( failure_count == childrenCount() )
+    if( failure_count != childrenCount() )
     {
-        haltChildren(0);
-        return NodeStatus::FAILURE;
+        throw LogicError("This is not supposed to happen");
     }
-
-    return NodeStatus::RUNNING;
+    halt();
+    return NodeStatus::FAILURE;
 }
 
 }
