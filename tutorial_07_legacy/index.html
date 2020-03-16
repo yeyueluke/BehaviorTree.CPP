@@ -738,7 +738,7 @@ to create a funtion pointer and <code>SimpleActionNode</code>.</p>
     <span class="k">auto</span> <span class="n">MoveToWrapperWithLambda</span> <span class="o">=</span> <span class="p">[</span><span class="o">&amp;</span><span class="n">move_to</span><span class="p">](</span><span class="n">TreeNode</span><span class="o">&amp;</span> <span class="n">parent_node</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NodeStatus</span>
     <span class="p">{</span>
         <span class="n">Point3D</span> <span class="n">goal</span><span class="p">;</span>
-        <span class="c1">// thanks to paren_node, you can access easily the inpyt and output ports.</span>
+        <span class="c1">// thanks to paren_node, you can access easily the input and output ports.</span>
         <span class="n">parent_node</span><span class="p">.</span><span class="n">getInput</span><span class="p">(</span><span class="s">&quot;goal&quot;</span><span class="p">,</span> <span class="n">goal</span><span class="p">);</span>
 
         <span class="kt">bool</span> <span class="n">res</span> <span class="o">=</span> <span class="n">move_to</span><span class="p">.</span><span class="n">go</span><span class="p">(</span> <span class="n">goal</span> <span class="p">);</span>
