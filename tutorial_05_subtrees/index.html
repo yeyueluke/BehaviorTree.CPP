@@ -691,6 +691,11 @@ the one to execute when the door is closed, into a separate tree called
     <span class="c1">// This logger stores the execution time of each node</span>
     <span class="n">MinitraceLogger</span> <span class="n">logger_minitrace</span><span class="p">(</span><span class="n">tree</span><span class="p">.</span><span class="n">root_node</span><span class="p">,</span> <span class="s">&quot;bt_trace.json&quot;</span><span class="p">);</span>
 
+<span class="cp">#ifdef ZMQ_INSTALLED</span>
+    <span class="c1">// This logger publish status changes using ZeroMQ. Used by Groot</span>
+    <span class="n">PublisherZMQ</span> <span class="n">publisher_zmq</span><span class="p">(</span><span class="n">tree</span><span class="p">);</span>
+<span class="cp">#endif</span>
+
     <span class="n">printTreeRecursively</span><span class="p">(</span><span class="n">tree</span><span class="p">.</span><span class="n">root_node</span><span class="p">);</span>
 
     <span class="c1">//while (1)</span>
