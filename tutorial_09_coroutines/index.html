@@ -787,7 +787,7 @@ sequence will be halted by a timeout after <em>150 millisecond</em>.</p>
 
     <span class="c1">//---------------------------------------</span>
     <span class="c1">// keep executin tick until it returns etiher SUCCESS or FAILURE</span>
-    <span class="k">while</span><span class="p">(</span> <span class="n">tree</span><span class="p">.</span><span class="n">root_node</span><span class="o">-&gt;</span><span class="n">executeTick</span><span class="p">()</span> <span class="o">==</span> <span class="n">NodeStatus</span><span class="o">::</span><span class="n">RUNNING</span><span class="p">)</span>
+    <span class="k">while</span><span class="p">(</span> <span class="n">tree</span><span class="p">.</span><span class="n">tickRoot</span><span class="p">()</span> <span class="o">==</span> <span class="n">NodeStatus</span><span class="o">::</span><span class="n">RUNNING</span><span class="p">)</span>
     <span class="p">{</span>
         <span class="n">std</span><span class="o">::</span><span class="n">this_thread</span><span class="o">::</span><span class="n">sleep_for</span><span class="p">(</span> <span class="n">Milliseconds</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="p">);</span>
     <span class="p">}</span>

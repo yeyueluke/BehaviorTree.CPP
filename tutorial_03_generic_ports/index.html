@@ -821,7 +821,7 @@ entry of the Blackboard.</p>
     <span class="n">factory</span><span class="p">.</span><span class="n">registerNodeType</span><span class="o">&lt;</span><span class="n">PrintTarget</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;PrintTarget&quot;</span><span class="p">);</span>
 
     <span class="k">auto</span> <span class="n">tree</span> <span class="o">=</span> <span class="n">factory</span><span class="p">.</span><span class="n">createTreeFromText</span><span class="p">(</span><span class="n">xml_text</span><span class="p">);</span>
-    <span class="n">tree</span><span class="p">.</span><span class="n">root_node</span><span class="o">-&gt;</span><span class="n">executeTick</span><span class="p">();</span>
+    <span class="n">tree</span><span class="p">.</span><span class="n">tickRoot</span><span class="p">();</span>
 
 <span class="cm">/* Expected output:</span>
 

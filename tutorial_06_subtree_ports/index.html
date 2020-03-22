@@ -720,7 +720,7 @@ information about the current state of a blackboard with the method <code>debugM
     <span class="c1">// Keep on ticking until you get either a SUCCESS or FAILURE state</span>
     <span class="k">while</span><span class="p">(</span> <span class="n">status</span> <span class="o">==</span> <span class="n">NodeStatus</span><span class="o">::</span><span class="n">RUNNING</span><span class="p">)</span>
     <span class="p">{</span>
-        <span class="n">status</span> <span class="o">=</span> <span class="n">tree</span><span class="p">.</span><span class="n">root_node</span><span class="o">-&gt;</span><span class="n">executeTick</span><span class="p">();</span>
+        <span class="n">status</span> <span class="o">=</span> <span class="n">tree</span><span class="p">.</span><span class="n">tickRoot</span><span class="p">();</span>
         <span class="n">SleepMS</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>   <span class="c1">// optional sleep to avoid &quot;busy loops&quot;</span>
     <span class="p">}</span>
 
