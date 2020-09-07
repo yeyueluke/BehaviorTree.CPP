@@ -19,7 +19,7 @@
     
     
       
-        <title>Tutorial 8: Class parameters - BehaviorTree.CPP</title>
+        <title>Tutorial 8: Additional arguments - BehaviorTree.CPP</title>
       
     
     
@@ -62,7 +62,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#custom-initialization-andor-construction" class="md-skip">
+        <a href="#pass-additional-arguments-during-initialization-andor-construction" class="md-skip">
           Skip to content
         </a>
       
@@ -89,7 +89,7 @@
           </span>
           <span class="md-header-nav__topic md-ellipsis">
             
-              Tutorial 8: Class parameters
+              Tutorial 8: Additional arguments
             
           </span>
         </div>
@@ -426,12 +426,12 @@
     
     
       <label class="md-nav__link md-nav__link--active" for="__toc">
-        Tutorial 8: Class parameters
+        Tutorial 8: Additional arguments
         <span class="md-nav__icon md-icon"></span>
       </label>
     
-    <a href="./" title="Tutorial 8: Class parameters" class="md-nav__link md-nav__link--active">
-      Tutorial 8: Class parameters
+    <a href="./" title="Tutorial 8: Additional arguments" class="md-nav__link md-nav__link--active">
+      Tutorial 8: Additional arguments
     </a>
     
       
@@ -448,8 +448,15 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#the-c-example" class="md-nav__link">
-    The C++ example
+  <a href="#method-1-register-a-custom-builder" class="md-nav__link">
+    Method 1: register a custom builder
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#method-2-use-an-init-method" class="md-nav__link">
+    Method 2: use an init method
   </a>
   
 </li>
@@ -540,8 +547,15 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#the-c-example" class="md-nav__link">
-    The C++ example
+  <a href="#method-1-register-a-custom-builder" class="md-nav__link">
+    Method 1: register a custom builder
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#method-2-use-an-init-method" class="md-nav__link">
+    Method 2: use an init method
   </a>
   
 </li>
@@ -566,7 +580,7 @@
                   
                 
                 
-                <h1 id="custom-initialization-andor-construction">Custom initialization and/or construction</h1>
+                <h1 id="pass-additional-arguments-during-initialization-andor-construction">Pass additional arguments during initialization and/or construction</h1>
 <p>In every single example we explored so far we were "forced" to provide a
 constructor with the following signature</p>
 <div class="highlight"><pre><span></span><code>    <span class="n">MyCustomNode</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">name</span><span class="p">,</span> <span class="k">const</span> <span class="n">NodeConfiguration</span><span class="o">&amp;</span> <span class="n">config</span><span class="p">);</span>
@@ -574,18 +588,20 @@ constructor with the following signature</p>
 
 <p>In same cases, it is desirable to pass to the constructor of our class 
 additional arguments, parameters, pointers, references, etc.</p>
-<p>We will just use the word <em>"parameter"</em> for the rest of the tutorial.</p>
-<p>Even if, theoretically, these parameters can be passed using Input Ports, 
+<p><strong>Many people use blackboards to do that: this is not recomendable.</strong></p>
+<p>We will just use the word <em>"arguments"</em> for the rest of the tutorial.</p>
+<p>Even if, theoretically, these arguments <strong>could</strong> be passed using Input Ports,
 that would be the wrong way to do it if:</p>
 <ul>
-<li>The parameters are known at <em>deployment-time</em>.</li>
-<li>The parameters don't change at <em>run-time</em>.</li>
-<li>The parameters don't need to be from the <em>XML</em>.</li>
+<li>The arguments are known at <em>deployment-time</em>.</li>
+<li>The arguments don't change at <em>run-time</em>.</li>
+<li>The arguments don't need to be set from the <em>XML</em>.</li>
 </ul>
-<p>If all these conditions are met, using ports is just cumbersome and highly discouraged.</p>
-<h2 id="the-c-example">The C++ example</h2>
-<p>Next, we can see two alternative ways to pass parameters to a class: 
-either as arguments of the constructor of the class or in an <code>init()</code> method.</p>
+<p>If all these conditions are met, using ports or the blackboard is cumbersome and highly discouraged.</p>
+<h2 id="method-1-register-a-custom-builder">Method 1: register a custom builder</h2>
+<p>Consider the following custom node called <strong>Action_A</strong>.</p>
+<p>We want to pass three additional arguments; they can be arbitrarily complex objects,
+you are not limited to built-in types.</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// Action_A has a different constructor than the default one.</span>
 <span class="k">class</span> <span class="nc">Action_A</span><span class="o">:</span> <span class="k">public</span> <span class="n">SyncActionNode</span>
 <span class="p">{</span>
@@ -599,46 +615,11 @@ either as arguments of the constructor of the class or in an <code>init()</code>
         <span class="n">_arg2</span><span class="p">(</span><span class="n">arg2</span><span class="p">),</span>
         <span class="n">_arg3</span><span class="p">(</span><span class="n">arg3</span><span class="p">)</span> <span class="p">{}</span>
 
-    <span class="n">NodeStatus</span> <span class="n">tick</span><span class="p">()</span> <span class="k">override</span>
-    <span class="p">{</span>
-        <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Action_A: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">_arg1</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; / &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">_arg2</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; / &quot;</span> 
-                  <span class="o">&lt;&lt;</span> <span class="n">_arg3</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
-        <span class="k">return</span> <span class="n">NodeStatus</span><span class="o">::</span><span class="n">SUCCESS</span><span class="p">;</span>
-    <span class="p">}</span>
     <span class="c1">// this example doesn&#39;t require any port</span>
     <span class="k">static</span> <span class="n">PortsList</span> <span class="n">providedPorts</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="p">{};</span> <span class="p">}</span>
 
-<span class="k">private</span><span class="o">:</span>
-    <span class="kt">int</span> <span class="n">_arg1</span><span class="p">;</span>
-    <span class="kt">double</span> <span class="n">_arg2</span><span class="p">;</span>
-    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">_arg3</span><span class="p">;</span>
-<span class="p">};</span>
-
-<span class="c1">// Action_B implements an init(...) method that must be called once</span>
-<span class="c1">// before the first tick()</span>
-<span class="k">class</span> <span class="nc">Action_B</span><span class="o">:</span> <span class="k">public</span> <span class="n">SyncActionNode</span>
-<span class="p">{</span>
-
-<span class="k">public</span><span class="o">:</span>
-    <span class="n">Action_B</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">name</span><span class="p">,</span> <span class="k">const</span> <span class="n">NodeConfiguration</span><span class="o">&amp;</span> <span class="n">config</span><span class="p">)</span><span class="o">:</span>
-        <span class="n">SyncActionNode</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span> <span class="p">{}</span>
-
-    <span class="c1">// we want this method to be called ONCE and BEFORE the first tick()</span>
-    <span class="kt">void</span> <span class="n">init</span><span class="p">(</span> <span class="kt">int</span> <span class="n">arg1</span><span class="p">,</span> <span class="kt">double</span> <span class="n">arg2</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">arg3</span> <span class="p">)</span>
-    <span class="p">{</span>
-        <span class="n">_arg1</span> <span class="o">=</span> <span class="p">(</span><span class="n">arg1</span><span class="p">);</span>
-        <span class="n">_arg2</span> <span class="o">=</span> <span class="p">(</span><span class="n">arg2</span><span class="p">);</span>
-        <span class="n">_arg3</span> <span class="o">=</span> <span class="p">(</span><span class="n">arg3</span><span class="p">);</span>
-    <span class="p">}</span>
-
-    <span class="n">NodeStatus</span> <span class="n">tick</span><span class="p">()</span> <span class="k">override</span>
-    <span class="p">{</span>
-        <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Action_B: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">_arg1</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; / &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">_arg2</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; / &quot;</span> 
-                  <span class="o">&lt;&lt;</span> <span class="n">_arg3</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
-        <span class="k">return</span> <span class="n">NodeStatus</span><span class="o">::</span><span class="n">SUCCESS</span><span class="p">;</span>
-    <span class="p">}</span>
-    <span class="c1">// this example doesn&#39;t require any port</span>
-    <span class="k">static</span> <span class="n">PortsList</span> <span class="n">providedPorts</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="p">{};</span> <span class="p">}</span>
+    <span class="c1">// tick() can access the private members</span>
+    <span class="n">NodeStatus</span> <span class="n">tick</span><span class="p">()</span> <span class="k">override</span><span class="p">;</span>
 
 <span class="k">private</span><span class="o">:</span>
     <span class="kt">int</span> <span class="n">_arg1</span><span class="p">;</span>
@@ -647,62 +628,84 @@ either as arguments of the constructor of the class or in an <code>init()</code>
 <span class="p">};</span>
 </code></pre></div>
 
-<p>The way we register and initialize them in our <code>main</code> is slightly different.</p>
-<div class="highlight"><pre><span></span><code><span class="k">static</span> <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">xml_text</span> <span class="o">=</span> <span class="sa">R</span><span class="s">&quot;</span><span class="dl">(</span><span class="s"></span>
+<p>This node should be registered as shown further:</p>
+<div class="highlight"><pre><span></span><code><span class="n">BehaviorTreeFactory</span> <span class="n">factory</span><span class="p">;</span>
 
-<span class="s"> &lt;root &gt;</span>
-<span class="s">     &lt;BehaviorTree&gt;</span>
-<span class="s">        &lt;Sequence&gt;</span>
-<span class="s">            &lt;Action_A/&gt;</span>
-<span class="s">            &lt;Action_B/&gt;</span>
-<span class="s">        &lt;/Sequence&gt;</span>
-<span class="s">     &lt;/BehaviorTree&gt;</span>
-<span class="s"> &lt;/root&gt;</span>
-<span class="s"> </span><span class="dl">)</span><span class="s">&quot;</span><span class="p">;</span>
-
-<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="c1">// A node builder is a functor that creates a std::unique_ptr&lt;TreeNode&gt;.</span>
+<span class="c1">// Using lambdas or std::bind, we can easily &quot;inject&quot; additional arguments.</span>
+<span class="n">NodeBuilder</span> <span class="n">builder_A</span> <span class="o">=</span>
+   <span class="p">[](</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">name</span><span class="p">,</span> <span class="k">const</span> <span class="n">NodeConfiguration</span><span class="o">&amp;</span> <span class="n">config</span><span class="p">)</span>
 <span class="p">{</span>
-    <span class="n">BehaviorTreeFactory</span> <span class="n">factory</span><span class="p">;</span>
+    <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">Action_A</span><span class="o">&gt;</span><span class="p">(</span> <span class="n">name</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="mi">42</span><span class="p">,</span> <span class="mf">3.14</span><span class="p">,</span> <span class="s">&quot;hello world&quot;</span> <span class="p">);</span>
+<span class="p">};</span>
 
-    <span class="c1">// A node builder is nothing more than a function pointer to create a </span>
-    <span class="c1">// std::unique_ptr&lt;TreeNode&gt;.</span>
-    <span class="c1">// Using lambdas or std::bind, we can easily &quot;inject&quot; additional arguments.</span>
-    <span class="n">NodeBuilder</span> <span class="n">builder_A</span> <span class="o">=</span> 
-       <span class="p">[](</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">name</span><span class="p">,</span> <span class="k">const</span> <span class="n">NodeConfiguration</span><span class="o">&amp;</span> <span class="n">config</span><span class="p">)</span>
+<span class="c1">// BehaviorTreeFactory::registerBuilder is a more general way to</span>
+<span class="c1">// register a custom node.</span>
+<span class="n">factory</span><span class="p">.</span><span class="n">registerBuilder</span><span class="o">&lt;</span><span class="n">Action_A</span><span class="o">&gt;</span><span class="p">(</span> <span class="s">&quot;Action_A&quot;</span><span class="p">,</span> <span class="n">builder_A</span><span class="p">);</span>
+
+<span class="c1">// Register more custom nodes, if needed.</span>
+<span class="c1">// ....</span>
+
+<span class="c1">// The rest of your code, where you create and tick the tree, goes here.</span>
+<span class="c1">// ....</span>
+</code></pre></div>
+
+<h2 id="method-2-use-an-init-method">Method 2: use an init method</h2>
+<p>Alternatively, you may call an init method before ticking the tree.</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">Action_B</span><span class="o">:</span> <span class="k">public</span> <span class="n">SyncActionNode</span>
+<span class="p">{</span>
+
+<span class="k">public</span><span class="o">:</span>
+    <span class="c1">// The constructor looks as usual.</span>
+    <span class="n">Action_B</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">name</span><span class="p">,</span> <span class="k">const</span> <span class="n">NodeConfiguration</span><span class="o">&amp;</span> <span class="n">config</span><span class="p">)</span><span class="o">:</span>
+        <span class="n">SyncActionNode</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span> <span class="p">{}</span>
+
+    <span class="c1">// We want this method to be called ONCE and BEFORE the first tick()</span>
+    <span class="kt">void</span> <span class="n">init</span><span class="p">(</span> <span class="kt">int</span> <span class="n">arg1</span><span class="p">,</span> <span class="kt">double</span> <span class="n">arg2</span><span class="p">,</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">arg3</span> <span class="p">)</span>
     <span class="p">{</span>
-        <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">Action_A</span><span class="o">&gt;</span><span class="p">(</span> <span class="n">name</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="mi">42</span><span class="p">,</span> <span class="mf">3.14</span><span class="p">,</span> <span class="s">&quot;hello world&quot;</span> <span class="p">);</span>
-    <span class="p">};</span>
-
-    <span class="c1">// BehaviorTreeFactory::registerBuilder is a more general way to</span>
-    <span class="c1">// register a custom node. </span>
-    <span class="n">factory</span><span class="p">.</span><span class="n">registerBuilder</span><span class="o">&lt;</span><span class="n">Action_A</span><span class="o">&gt;</span><span class="p">(</span> <span class="s">&quot;Action_A&quot;</span><span class="p">,</span> <span class="n">builder_A</span><span class="p">);</span>
-
-    <span class="c1">// The regitration of  Action_B is done as usual, but remember </span>
-    <span class="c1">// that we still need to call Action_B::init()</span>
-    <span class="n">factory</span><span class="p">.</span><span class="n">registerNodeType</span><span class="o">&lt;</span><span class="n">Action_B</span><span class="o">&gt;</span><span class="p">(</span> <span class="s">&quot;Action_B&quot;</span> <span class="p">);</span>
-
-    <span class="k">auto</span> <span class="n">tree</span> <span class="o">=</span> <span class="n">factory</span><span class="p">.</span><span class="n">createTreeFromText</span><span class="p">(</span><span class="n">xml_text</span><span class="p">);</span>
-
-    <span class="c1">// Iterate through all the nodes and call init() if it is an Action_B</span>
-    <span class="k">for</span><span class="p">(</span> <span class="k">auto</span><span class="o">&amp;</span> <span class="nl">node</span><span class="p">:</span> <span class="n">tree</span><span class="p">.</span><span class="n">nodes</span> <span class="p">)</span>
-    <span class="p">{</span>
-        <span class="k">if</span><span class="p">(</span> <span class="k">auto</span> <span class="n">action_B_node</span> <span class="o">=</span> <span class="k">dynamic_cast</span><span class="o">&lt;</span><span class="n">Action_B</span><span class="o">*&gt;</span><span class="p">(</span> <span class="n">node</span><span class="p">.</span><span class="n">get</span><span class="p">()</span> <span class="p">))</span>
-        <span class="p">{</span>
-            <span class="n">action_B_node</span><span class="o">-&gt;</span><span class="n">init</span><span class="p">(</span> <span class="mi">69</span><span class="p">,</span> <span class="mf">9.99</span><span class="p">,</span> <span class="s">&quot;interesting_value&quot;</span> <span class="p">);</span>
-        <span class="p">}</span>
+        <span class="n">_arg1</span> <span class="o">=</span> <span class="p">(</span><span class="n">arg1</span><span class="p">);</span>
+        <span class="n">_arg2</span> <span class="o">=</span> <span class="p">(</span><span class="n">arg2</span><span class="p">);</span>
+        <span class="n">_arg3</span> <span class="o">=</span> <span class="p">(</span><span class="n">arg3</span><span class="p">);</span>
     <span class="p">}</span>
 
-    <span class="n">tree</span><span class="p">.</span><span class="n">tickRoot</span><span class="p">();</span>
+    <span class="c1">// this example doesn&#39;t require any port</span>
+    <span class="k">static</span> <span class="n">PortsList</span> <span class="n">providedPorts</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="p">{};</span> <span class="p">}</span>
 
-    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="c1">// tick() can access the private members</span>
+    <span class="n">NodeStatus</span> <span class="n">tick</span><span class="p">()</span> <span class="k">override</span><span class="p">;</span>
+
+<span class="k">private</span><span class="o">:</span>
+    <span class="kt">int</span> <span class="n">_arg1</span><span class="p">;</span>
+    <span class="kt">double</span> <span class="n">_arg2</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">_arg3</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div>
+
+<p>The way we register and initialize Action_B is slightly different:</p>
+<div class="highlight"><pre><span></span><code><span class="n">BehaviorTreeFactory</span> <span class="n">factory</span><span class="p">;</span>
+
+<span class="c1">// The regitration of  Action_B is done as usual, but remember</span>
+<span class="c1">// that we still need to call Action_B::init()</span>
+<span class="n">factory</span><span class="p">.</span><span class="n">registerNodeType</span><span class="o">&lt;</span><span class="n">Action_B</span><span class="o">&gt;</span><span class="p">(</span> <span class="s">&quot;Action_B&quot;</span> <span class="p">);</span>
+
+<span class="c1">// Register more custom nodes, if needed.</span>
+<span class="c1">// ....</span>
+
+<span class="c1">// Create the whole tree</span>
+<span class="k">auto</span> <span class="n">tree</span> <span class="o">=</span> <span class="n">factory</span><span class="p">.</span><span class="n">createTreeFromText</span><span class="p">(</span><span class="n">xml_text</span><span class="p">);</span>
+
+<span class="c1">// Iterate through all the nodes and call init() if it is an Action_B</span>
+<span class="k">for</span><span class="p">(</span> <span class="k">auto</span><span class="o">&amp;</span> <span class="nl">node</span><span class="p">:</span> <span class="n">tree</span><span class="p">.</span><span class="n">nodes</span> <span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">// Not a typo: it is &quot;=&quot;, not &quot;==&quot;</span>
+    <span class="k">if</span><span class="p">(</span> <span class="k">auto</span> <span class="n">action_B</span> <span class="o">=</span> <span class="k">dynamic_cast</span><span class="o">&lt;</span><span class="n">Action_B</span><span class="o">*&gt;</span><span class="p">(</span> <span class="n">node</span><span class="p">.</span><span class="n">get</span><span class="p">()</span> <span class="p">))</span>
+    <span class="p">{</span>
+        <span class="n">action_B</span><span class="o">-&gt;</span><span class="n">init</span><span class="p">(</span> <span class="mi">42</span><span class="p">,</span> <span class="mf">3.14</span><span class="p">,</span> <span class="s">&quot;hello world&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
 <span class="p">}</span>
 
-
-<span class="cm">/* Expected output:</span>
-
-<span class="cm">    Action_A: 42 / 3.14 / hello world</span>
-<span class="cm">    Action_B: 69 / 9.99 / interesting_value</span>
-<span class="cm">*/</span>
+<span class="c1">// The rest of your code, where you tick the tree, goes here.</span>
+<span class="c1">// ....</span>
 </code></pre></div>
                 
               

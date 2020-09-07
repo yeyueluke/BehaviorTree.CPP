@@ -469,8 +469,8 @@
 
 
   <li class="md-nav__item">
-    <a href="../tutorial_08_additional_args/" title="Tutorial 8: Class parameters" class="md-nav__link">
-      Tutorial 8: Class parameters
+    <a href="../tutorial_08_additional_args/" title="Tutorial 8: Additional arguments" class="md-nav__link">
+      Tutorial 8: Additional arguments
     </a>
   </li>
 
@@ -674,6 +674,23 @@ that should print a given string on <code>std::cout</code>.</p>
 <span class="p">};</span>
 </code></pre></div>
 
+<p>Alternatively the same functionality can be implemented in a simple function. This function takes an instance of <code>BT:TreeNode</code> as input in order to access the "message" Input Port:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// Simple function that return a NodeStatus</span>
+<span class="n">BT</span><span class="o">::</span><span class="n">NodeStatus</span> <span class="n">SaySomethingSimple</span><span class="p">(</span><span class="n">BT</span><span class="o">::</span><span class="n">TreeNode</span><span class="o">&amp;</span> <span class="n">self</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">Optional</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">msg</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">getInput</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;message&quot;</span><span class="p">);</span>
+  <span class="c1">// Check if optional is valid. If not, throw its error</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">msg</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="k">throw</span> <span class="n">BT</span><span class="o">::</span><span class="n">RuntimeError</span><span class="p">(</span><span class="s">&quot;missing required input [message]: &quot;</span><span class="p">,</span> <span class="n">msg</span><span class="p">.</span><span class="n">error</span><span class="p">());</span>
+  <span class="p">}</span>
+
+  <span class="c1">// use the method value() to extract the valid message.</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Robot says: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">msg</span><span class="p">.</span><span class="n">value</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+  <span class="k">return</span> <span class="n">NodeStatus</span><span class="o">::</span><span class="n">SUCCESS</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+
 <p>When a custom TreeNode has input and/or output ports, these ports must be 
 declared in the <strong>static</strong> method:</p>
 <div class="highlight"><pre><span></span><code>    <span class="k">static</span> <span class="n">MyCustomNode</span><span class="o">::</span><span class="n">PortsList</span> <span class="n">providedPorts</span><span class="p">();</span>
@@ -699,7 +716,7 @@ check the validity of the returned value and to decide what to do:</p>
 </div>
 <h2 id="output-ports">Output ports</h2>
 <p>An input port pointing to the entry of the blackboard will be valid only
-if another node have already wrritten "something" inside that same entry.</p>
+if another node have already written "something" inside that same entry.</p>
 <p><code>ThinkWhatToSay</code> is an example of Node that uses an <strong>output port</strong> to write a 
 string into an entry.</p>
 <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ThinkWhatToSay</span> <span class="o">:</span> <span class="k">public</span> <span class="n">SyncActionNode</span>
@@ -745,22 +762,29 @@ static value into an entry using the built-in Actions called <code>SetBlackboard
 </li>
 </ul>
 <p><code>SaySomething2</code> is a SimpleActionNode. </p>
-<div class="highlight"><pre><span></span><code> <span class="nt">&lt;root&gt;</span>
-     <span class="nt">&lt;BehaviorTree&gt;</span>
-        <span class="nt">&lt;Sequence</span> <span class="na">name=</span><span class="s">&quot;root&quot;</span><span class="nt">&gt;</span>
-            <span class="nt">&lt;SaySomething</span>     <span class="na">message=</span><span class="s">&quot;start thinking...&quot;</span> <span class="nt">/&gt;</span>
-            <span class="nt">&lt;ThinkWhatToSay</span>   <span class="na">text=</span><span class="s">&quot;{the_answer}&quot;</span><span class="nt">/&gt;</span>
-            <span class="nt">&lt;SaySomething</span>     <span class="na">message=</span><span class="s">&quot;{the_answer}&quot;</span> <span class="nt">/&gt;</span>
-            <span class="nt">&lt;SaySomething2</span>    <span class="na">message=</span><span class="s">&quot;SaySomething2 works too...&quot;</span> <span class="nt">/&gt;</span>
-            <span class="nt">&lt;SaySomething2</span>    <span class="na">message=</span><span class="s">&quot;{the_answer}&quot;</span> <span class="nt">/&gt;</span>
-        <span class="nt">&lt;/Sequence&gt;</span>
-     <span class="nt">&lt;/BehaviorTree&gt;</span>
- <span class="nt">&lt;/root&gt;</span>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;root</span> <span class="na">main_tree_to_execute =</span> <span class="s">&quot;MainTree&quot;</span> <span class="nt">&gt;</span>
+    <span class="nt">&lt;BehaviorTree</span> <span class="na">ID=</span><span class="s">&quot;MainTree&quot;</span><span class="nt">&gt;</span>
+       <span class="nt">&lt;Sequence</span> <span class="na">name=</span><span class="s">&quot;root_sequence&quot;</span><span class="nt">&gt;</span>
+           <span class="nt">&lt;SaySomething</span>     <span class="na">message=</span><span class="s">&quot;start thinking...&quot;</span> <span class="nt">/&gt;</span>
+           <span class="nt">&lt;ThinkWhatToSay</span>   <span class="na">text=</span><span class="s">&quot;{the_answer}&quot;</span><span class="nt">/&gt;</span>
+           <span class="nt">&lt;SaySomething</span>     <span class="na">message=</span><span class="s">&quot;{the_answer}&quot;</span> <span class="nt">/&gt;</span>
+           <span class="nt">&lt;SaySomething2</span>    <span class="na">message=</span><span class="s">&quot;SaySomething2 works too...&quot;</span> <span class="nt">/&gt;</span>
+           <span class="nt">&lt;SaySomething2</span>    <span class="na">message=</span><span class="s">&quot;{the_answer}&quot;</span> <span class="nt">/&gt;</span>
+       <span class="nt">&lt;/Sequence&gt;</span>
+    <span class="nt">&lt;/BehaviorTree&gt;</span>
+<span class="nt">&lt;/root&gt;</span>
 </code></pre></div>
 
 <p>The C++ code:</p>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><code><span class="cp">#include</span> <span class="cpf">&quot;behaviortree_cpp_v3/bt_factory.h&quot;</span><span class="cp"></span>
+
+<span class="c1">// file that contains the custom nodes definitions</span>
+<span class="cp">#include</span> <span class="cpf">&quot;dummy_nodes.h&quot;</span><span class="cp"></span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
 <span class="p">{</span>
+    <span class="k">using</span> <span class="k">namespace</span> <span class="n">DummyNodes</span><span class="p">;</span>
+
     <span class="n">BehaviorTreeFactory</span> <span class="n">factory</span><span class="p">;</span>
 
     <span class="n">factory</span><span class="p">.</span><span class="n">registerNodeType</span><span class="o">&lt;</span><span class="n">SaySomething</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;SaySomething&quot;</span><span class="p">);</span>
@@ -773,7 +797,7 @@ static value into an entry using the built-in Actions called <code>SetBlackboard
     <span class="n">factory</span><span class="p">.</span><span class="n">registerSimpleAction</span><span class="p">(</span><span class="s">&quot;SaySomething2&quot;</span><span class="p">,</span> <span class="n">SaySomethingSimple</span><span class="p">,</span> 
                                  <span class="n">say_something_ports</span> <span class="p">);</span>
 
-    <span class="k">auto</span> <span class="n">tree</span> <span class="o">=</span> <span class="n">factory</span><span class="p">.</span><span class="n">createTreeFromText</span><span class="p">(</span><span class="n">xml_text</span><span class="p">);</span>
+    <span class="k">auto</span> <span class="n">tree</span> <span class="o">=</span> <span class="n">factory</span><span class="p">.</span><span class="n">createTreeFromFile</span><span class="p">(</span><span class="s">&quot;./my_tree.xml&quot;</span><span class="p">);</span>
 
     <span class="n">tree</span><span class="p">.</span><span class="n">tickRoot</span><span class="p">();</span>
 
