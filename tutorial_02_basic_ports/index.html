@@ -843,11 +843,10 @@ static value into an entry using the built-in Actions called <code>SetBlackboard
 <div class="highlight"><pre><span></span><code><span class="nt">&lt;root</span> <span class="na">main_tree_to_execute =</span> <span class="s">&quot;MainTree&quot;</span> <span class="nt">&gt;</span>
     <span class="nt">&lt;BehaviorTree</span> <span class="na">ID=</span><span class="s">&quot;MainTree&quot;</span><span class="nt">&gt;</span>
        <span class="nt">&lt;Sequence</span> <span class="na">name=</span><span class="s">&quot;root_sequence&quot;</span><span class="nt">&gt;</span>
-           <span class="nt">&lt;SaySomething</span>     <span class="na">message=</span><span class="s">&quot;start thinking...&quot;</span> <span class="nt">/&gt;</span>
+           <span class="nt">&lt;SaySomething</span>     <span class="na">message=</span><span class="s">&quot;hello&quot;</span> <span class="nt">/&gt;</span>
+           <span class="nt">&lt;SaySomething2</span>    <span class="na">message=</span><span class="s">&quot;this works too&quot;</span> <span class="nt">/&gt;</span>
            <span class="nt">&lt;ThinkWhatToSay</span>   <span class="na">text=</span><span class="s">&quot;{the_answer}&quot;</span><span class="nt">/&gt;</span>
            <span class="nt">&lt;SaySomething</span>     <span class="na">message=</span><span class="s">&quot;{the_answer}&quot;</span> <span class="nt">/&gt;</span>
-           <span class="nt">&lt;SaySomething2</span>    <span class="na">message=</span><span class="s">&quot;this works too&quot;</span> <span class="nt">/&gt;</span>
-           <span class="nt">&lt;SaySomething2</span>    <span class="na">message=</span><span class="s">&quot;{the_answer}&quot;</span> <span class="nt">/&gt;</span>
        <span class="nt">&lt;/Sequence&gt;</span>
     <span class="nt">&lt;/BehaviorTree&gt;</span>
 <span class="nt">&lt;/root&gt;</span>
@@ -880,8 +879,7 @@ static value into an entry using the built-in Actions called <code>SetBlackboard
 
 <span class="w">    </span><span class="cm">/*  Expected output:</span>
 
-<span class="cm">        Robot says: start thinking...</span>
-<span class="cm">        Robot says: The answer is 42</span>
+<span class="cm">        Robot says: hello</span>
 <span class="cm">        Robot says: this works too</span>
 <span class="cm">        Robot says: The answer is 42</span>
 <span class="cm">    */</span><span class="w"></span>
