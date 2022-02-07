@@ -696,7 +696,7 @@ and propagates through the tree until it reaches a leaf node.</p>
 </li>
 <li>
 <p>If a TreeNode has one or more children, it is in charge for ticking
-  them, based on its state, external parameters or the resulkt of the
+  them, based on its state, external parameters or the result of the
   previous sibling.</p>
 </li>
 <li>
@@ -800,11 +800,11 @@ the result returned by its child; An Inverter followed by the node called
 <div class="codehilite"><pre><span></span><code>&quot;Is the door closed?&quot;.
 </code></pre></div>
 
-<p>The node <strong>Retry</strong> will repeat ticking the child up to N times (3 in this case)
+<p>The node <strong>Retry</strong> will repeat ticking the child up to <strong>num_attempts</strong> times (5 in this case)
 if the child returns FAILURE.</p>
 <p><strong>Apparently</strong>, the branch on the right side means: </p>
 <div class="codehilite"><pre><span></span><code><span class="k">If</span> <span class="nv">the</span> <span class="nv">door</span> <span class="nv">is</span> <span class="nv">closed</span>, <span class="k">then</span> <span class="nv">try</span> <span class="nv">to</span> <span class="nv">open</span> <span class="nv">it</span>.
-<span class="nv">Try</span> <span class="nv">up</span> <span class="nv">to</span> <span class="mi">3</span> <span class="nv">times</span>, <span class="nv">otherwise</span> <span class="nv">give</span> <span class="nv">up</span> <span class="nv">and</span> <span class="k">return</span> <span class="nv">FAILURE</span>.
+<span class="nv">Try</span> <span class="nv">up</span> <span class="nv">to</span> <span class="mi">5</span> <span class="nv">times</span>, <span class="nv">otherwise</span> <span class="nv">give</span> <span class="nv">up</span> <span class="nv">and</span> <span class="k">return</span> <span class="nv">FAILURE</span>.
 </code></pre></div>
 
 <p>But...</p>
