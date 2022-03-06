@@ -756,8 +756,7 @@ Check first (and once) if the door is open.</p>
 <p>This ControlNode is used when you want to interrupt an <strong>asynchronous</strong>
 child if one of the previous Conditions changes its state from 
 FAILURE to SUCCESS.</p>
-<p>In the following example, character will sleep up to 8 hours or less,
-if he/she is fully rested.</p>
+<p>In the following example, the character will sleep <em>up to</em> 8 hours. If he/she has fully rested, then the node <code>areYouRested?</code> will return SUCCESS and the asynchronous nodes <code>Timeout (8 hrs)</code> and <code>Sleep</code> will be interrupted.</p>
 <p><img alt="ReactiveFallback" src="../images/ReactiveFallback.png" /></p>
 <details class="example">
 <summary>See the pseudocode</summary>
