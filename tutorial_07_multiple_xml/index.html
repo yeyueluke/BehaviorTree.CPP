@@ -504,15 +504,15 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#using-the-include-tag" class="md-nav__link">
-    Using the \&lt;include> tag
+  <a href="#load-multiple-files-with-include" class="md-nav__link">
+    Load multiple files with "include"
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#load-multiple-manually" class="md-nav__link">
-    Load multiple manually
+  <a href="#load-multiple-files-manually" class="md-nav__link">
+    Load multiple files manually
   </a>
   
 </li>
@@ -648,15 +648,15 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#using-the-include-tag" class="md-nav__link">
-    Using the \&lt;include> tag
+  <a href="#load-multiple-files-with-include" class="md-nav__link">
+    Load multiple files with "include"
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#load-multiple-manually" class="md-nav__link">
-    Load multiple manually
+  <a href="#load-multiple-files-manually" class="md-nav__link">
+    Load multiple files manually
   </a>
   
 </li>
@@ -684,7 +684,7 @@ from a single XMl file.</p>
 <p>If multiple Subtrees were used, they were all included into the same XML.</p>
 <p>In recent version of BT.CPP (3.7+), the user can more easily
 load trees from multiple files, if needed.</p>
-<h2 id="using-the-include-tag">Using the \&lt;include> tag</h2>
+<h2 id="load-multiple-files-with-include">Load multiple files with "include"</h2>
 <p>We will consider a main tree that invoke 2 different subtrees.</p>
 <p>File <strong>main_tree.xml</strong>:</p>
 <p><div class="highlight"><pre><span></span><code><span class="nt">&lt;root</span> <span class="na">main_tree_to_execute =</span> <span class="s">&quot;MainTree&quot;</span><span class="nt">&gt;</span>
@@ -718,7 +718,7 @@ that tells to <code>BehaviorTreeFactory</code> where to find the required depend
 <p>We need to create the tree as usual:</p>
 <div class="highlight"><pre><span></span><code><span class="n">factory</span><span class="p">.</span><span class="n">createTreeFromFile</span><span class="p">(</span><span class="s">&quot;main_tree.xml&quot;</span><span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<h2 id="load-multiple-manually">Load multiple manually</h2>
+<h2 id="load-multiple-files-manually">Load multiple files manually</h2>
 <p>If we don't want to add relative and hard-coded paths into our XML,
 or if we want to instantiate a subtree instead of the main tree, there is a
 new approach, since BT.CPP 3.7+.</p>
