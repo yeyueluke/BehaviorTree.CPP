@@ -864,9 +864,10 @@ base class. Let's have a look again at the SleepNode.</p>
 <span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">NodeStatus</span><span class="o">::</span><span class="n">SUCCESS</span><span class="p">;</span><span class="w"></span>
 <span class="w">     </span><span class="p">}</span><span class="w"></span>
 
-<span class="w">    </span><span class="c1">// The halt() method can not kill the spawned thread :()</span>
-<span class="w">    </span><span class="c1">// void halt(); </span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// The halt() method can not kill the spawned thread :(</span>
+
+<span class="w">    </span><span class="c1">// Keep in mind that most of the time we should not</span>
+<span class="w">    </span><span class="c1">// override AsyncActionNode::halt()</span>
 <span class="p">};</span><span class="w"></span>
 </code></pre></div>
 <p>A "correct" (but over-engineered) version of it would be:</p>
