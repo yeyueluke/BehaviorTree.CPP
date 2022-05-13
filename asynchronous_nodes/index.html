@@ -714,6 +714,11 @@
 </ul>
 <h2 id="concurrency-vs-parallelism">Concurrency vs Parallelism</h2>
 <p>If you Google those words, you will read many good articles about this topic.</p>
+<div class="admonition info">
+<p class="admonition-title">Defintions</p>
+<p><strong>Concurrency</strong> is when two or more tasks can start, run, and complete in overlapping time periods. It doesn't necessarily mean they'll ever both be running at the same instant. </p>
+<p><strong>Parallelism</strong> is when tasks literally run at the same time in different  threads, e.g., on a multicore processor.</p>
+</div>
 <p>BT.CPP executes all the nodes <strong>Concurrently</strong>, in other words:</p>
 <ul>
 <li>The Tree execution engine itself is single-threaded.</li>
