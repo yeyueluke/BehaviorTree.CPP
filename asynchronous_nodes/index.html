@@ -952,7 +952,7 @@ This pattern can still be useful in some case, but you must remember that introd
 <span class="w">    </span><span class="p">{</span><span class="w"></span>
 <span class="w">      </span><span class="c1">// send a request to the server</span>
 <span class="w">      </span><span class="kt">bool</span><span class="w"> </span><span class="n">accepted</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sendStartRequestToServer</span><span class="p">();</span><span class="w"></span>
-<span class="w">      </span><span class="c1">// check if the request was rejected</span>
+<span class="w">      </span><span class="c1">// check if the request was rejected by the server</span>
 <span class="w">      </span><span class="k">if</span><span class="p">(</span><span class="w"> </span><span class="o">!</span><span class="n">accepted</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">NodeStatus</span><span class="o">::</span><span class="n">FAILURE</span><span class="p">;</span><span class="w"></span>
 <span class="w">      </span><span class="p">}</span><span class="w"></span>
@@ -969,7 +969,9 @@ This pattern can still be useful in some case, but you must remember that introd
 
 <span class="w">      </span><span class="k">if</span><span class="p">(</span><span class="w"> </span><span class="n">request_state</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">DONE</span><span class="w"> </span><span class="p">)</span><span class="w"></span>
 <span class="w">      </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="c1">// retrieve the result</span>
 <span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">getResult</span><span class="p">();</span><span class="w"></span>
+<span class="w">        </span><span class="c1">// check if this result should be considered &quot;good&quot;</span>
 <span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="w"> </span><span class="n">IsValidResult</span><span class="p">(</span><span class="n">result</span><span class="p">)</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">          </span><span class="k">return</span><span class="w"> </span><span class="n">NodeStatus</span><span class="o">::</span><span class="n">SUCCESS</span><span class="p">;</span><span class="w"></span>
 <span class="w">        </span><span class="p">}</span><span class="w"> </span>
@@ -978,10 +980,12 @@ This pattern can still be useful in some case, but you must remember that introd
 <span class="w">        </span><span class="p">}</span><span class="w"></span>
 <span class="w">      </span><span class="p">}</span><span class="w"></span>
 <span class="w">      </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="w"> </span><span class="n">request_state</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ABORTED</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="c1">// fail if the action was aborted by some other client</span>
+<span class="w">        </span><span class="c1">// or by the server itself</span>
 <span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">NodeStatus</span><span class="o">::</span><span class="n">FAILURE</span><span class="p">;</span><span class="w"></span>
 <span class="w">      </span><span class="p">}</span><span class="w"></span>
 <span class="w">      </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="c1">// request_state == EXECUTING ?</span>
+<span class="w">        </span><span class="c1">// probably (request_state == EXECUTING) ?</span>
 <span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">NodeStatus</span><span class="o">::</span><span class="n">RUNNING</span><span class="p">;</span><span class="w"></span>
 <span class="w">      </span><span class="p">}</span><span class="w"></span>
 <span class="w">    </span><span class="p">}</span><span class="w"></span>
