@@ -733,10 +733,10 @@ another server or simply another thread.</p>
 <li>Can be stopped as fast as possible when the method <code>halt()</code> (to be implemented by the developer) is invoked.</li>
 </ul>
 <p>When your Tree ends up executing an Asynchronous action that returns running, that RUNNING state is usually propagated backbard and the entire Tree is itself in the RUNNING state.</p>
-<p>In the example below, "ActionE" is asynchronous and the RUNNING; when
+<p>In the example below, "ActionE" is asynchronous and RUNNING; when
 a node is RUNNING, usually its parent returns RUNNING too.</p>
 <p><img alt="tree in running state" src="../images/RunningTree.svg" /></p>
-<p>Let's consider a simple "SleepNode". A good template to get started is the StatefullAction</p>
+<p>Let's consider a simple "SleepNode". A good template to get started is the StatefulAction</p>
 <div class="highlight"><pre><span></span><code><span class="c1">// Example os Asynchronous node that use StatefulActionNode as base class</span>
 <span class="k">class</span> <span class="nc">SleepNode</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">BT</span><span class="o">::</span><span class="n">StatefulActionNode</span><span class="w"></span>
 <span class="p">{</span><span class="w"></span>
@@ -792,7 +792,7 @@ a node is RUNNING, usually its parent returns RUNNING too.</p>
 </code></pre></div>
 <p>In the code above:</p>
 <ol>
-<li>When the SleedNode is ticked the first time, the <code>onStart()</code> method is executed.
+<li>When the SleepNode is ticked the first time, the <code>onStart()</code> method is executed.
 This may return SUCCESS immediately if the sleep time is 0 or will return RUNNING otherwise.</li>
 <li>We should continue ticking the tree in a loop. This will invoke the method
 <code>onRunning()</code> that may return RUNNING again or, eventually, SUCCESS.</li>
@@ -832,16 +832,16 @@ This may return SUCCESS immediately if the sleep time is 0 or will return RUNNIN
 </code></pre></div>
 <h2 id="the-problem-with-multi-threading">The problem with multi-threading</h2>
 <p>In the early days of this library (version 1.x), spawning a new thread
-looked as a good solution to build asynchronous Actions.</p>
+looked like a good solution to build asynchronous Actions.</p>
 <p>That was a bad idea, for multiple reasons:</p>
 <ul>
 <li>Accessing the blackboard in a thread-safe way is harder (more about this later).</li>
 <li>You probably don't need to.</li>
 <li>People think that this will magically make the Action "asynchronous", but they forget that it is still <strong>their responsibility</strong> to stop that thread "somehow" when the <code>halt()</code>method is invoked.</li>
 </ul>
-<p>For this reason, user a usually discouraged from using <code>BT::AsyncActionNode</code> as a
+<p>For this reason, users are usually discouraged from using <code>BT::AsyncActionNode</code> as a
 base class. Let's have a look again at the SleepNode.</p>
-<div class="highlight"><pre><span></span><code><span class="c1">// This will spawn its own thread. But it still have problems when halted</span>
+<div class="highlight"><pre><span></span><code><span class="c1">// This will spawn its own thread. But it still has problems when halted</span>
 <span class="k">class</span> <span class="nc">BadSleepNode</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">BT</span><span class="o">::</span><span class="n">AsyncActionNode</span><span class="w"></span>
 <span class="p">{</span><span class="w"></span>
 <span class="w">  </span><span class="k">public</span><span class="o">:</span><span class="w"></span>
@@ -856,8 +856,8 @@ base class. Let's have a look again at the SleepNode.</p>
 
 <span class="w">    </span><span class="n">NodeStatus</span><span class="w"> </span><span class="n">tick</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
 <span class="w">    </span><span class="p">{</span><span class="w">  </span>
-<span class="w">        </span><span class="c1">// This code run in its own thread, therefore the Tree is still running.</span>
-<span class="w">        </span><span class="c1">// Think looks good but the thread can&#39;t be aborted</span>
+<span class="w">        </span><span class="c1">// This code runs in its own thread, therefore the Tree is still running.</span>
+<span class="w">        </span><span class="c1">// This seems good but the thread still can&#39;t be aborted</span>
 <span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">msec</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
 <span class="w">        </span><span class="n">getInput</span><span class="p">(</span><span class="s">&quot;msec&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">msec</span><span class="p">);</span><span class="w"></span>
 <span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">this_thread</span><span class="o">::</span><span class="n">sleep_for</span><span class="p">(</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">milliseconds</span><span class="p">(</span><span class="n">msec</span><span class="p">)</span><span class="w"> </span><span class="p">);</span><span class="w"></span>
@@ -891,7 +891,7 @@ base class. Let's have a look again at the SleepNode.</p>
 <span class="w">        </span><span class="n">getInput</span><span class="p">(</span><span class="s">&quot;msec&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">msec</span><span class="p">);</span><span class="w"></span>
 
 <span class="w">        </span><span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="o">::</span><span class="nn">chrono</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">deadline</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">system_clock</span><span class="o">::</span><span class="n">now</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">milliseconds</span><span class="p">(</span><span class="n">msec</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">deadline</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">system_clock</span><span class="o">::</span><span class="n">now</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">milliseconds</span><span class="p">(</span><span class="n">msec</span><span class="p">);</span><span class="w"></span>
 
 <span class="w">        </span><span class="c1">// periodically check isHaltRequested() </span>
 <span class="w">        </span><span class="c1">// and sleep for a small amount of time only (1 millisecond)</span>
