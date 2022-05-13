@@ -18,7 +18,7 @@
     
     
       
-        <title>Tutorial 7: Wrap legacy code - BehaviorTree.CPP</title>
+        <title>Tutorial 7: Load from multiple XMLs - BehaviorTree.CPP</title>
       
     
     
@@ -69,7 +69,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#wraping-legacy-code" class="md-skip">
+        <a href="#how-to-use-multiple-xml-to-store-your-subtrees" class="md-skip">
           Skip to content
         </a>
       
@@ -100,7 +100,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Tutorial 7: Wrap legacy code
+              Tutorial 7: Load from multiple XMLs
             
           </span>
         </div>
@@ -430,7 +430,7 @@
   
     <li class="md-nav__item">
       <a href="../tutorial_04_sequence/" class="md-nav__link">
-        Tutorial 4: Sequences
+        Tutorial 4: Reactive Trees
       </a>
     </li>
   
@@ -481,12 +481,12 @@
       
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
-          Tutorial 7: Wrap legacy code
+          Tutorial 7: Load from multiple XMLs
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
-        Tutorial 7: Wrap legacy code
+        Tutorial 7: Load from multiple XMLs
       </a>
       
         
@@ -504,8 +504,15 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#c-code" class="md-nav__link">
-    C++ code
+  <a href="#using-the-include-tag" class="md-nav__link">
+    Using the \&lt;include> tag
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#load-multiple-files-without-include" class="md-nav__link">
+    Load multiple files without \&lt;include>
   </a>
   
 </li>
@@ -570,14 +577,14 @@
       
       
         <label class="md-nav__link" for="__nav_4">
-          Migration Guide
+          Application Notes
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" aria-label="Migration Guide" data-md-level="1">
+      <nav class="md-nav" aria-label="Application Notes" data-md-level="1">
         <label class="md-nav__title" for="__nav_4">
           <span class="md-nav__icon md-icon"></span>
-          Migration Guide
+          Application Notes
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -587,8 +594,22 @@
   
   
     <li class="md-nav__item">
-      <a href="../MigrationGuide/" class="md-nav__link">
-        Migrate from Version 2.X
+      <a href="../asynchronous_nodes/" class="md-nav__link">
+        Concurrency and Asynchronous Nodes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../example_01_legacy_wrap/" class="md-nav__link">
+        How to Wrap legacy code
       </a>
     </li>
   
@@ -627,8 +648,15 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#c-code" class="md-nav__link">
-    C++ code
+  <a href="#using-the-include-tag" class="md-nav__link">
+    Using the \&lt;include> tag
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#load-multiple-files-without-include" class="md-nav__link">
+    Load multiple files without \&lt;include>
   </a>
   
 </li>
@@ -645,99 +673,98 @@
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/BehaviorTree/BehaviorTree.CPP/edit/master/docs/tutorial_07_legacy.md" title="Edit this page" class="md-content__button md-icon">
+                  <a href="https://github.com/BehaviorTree/BehaviorTree.CPP/edit/master/docs/tutorial_07_multiple_xml.md" title="Edit this page" class="md-content__button md-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
                   </a>
                 
                 
-                <h1 id="wraping-legacy-code">Wraping legacy code</h1>
-<p>In this tutorial we will see how to deal with legacy code that was not meant to be used
-with BehaviorTree.CPP.</p>
-<p>Your class might look like this one:</p>
-<div class="highlight"><pre><span></span><code><span class="c1">// This is my custom type.</span>
-<span class="k">struct</span> <span class="nc">Point3D</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">;</span><span class="w"> </span><span class="p">};</span><span class="w"></span>
-
-<span class="c1">// We want to create an ActionNode to calls method MyLegacyMoveTo::go</span>
-<span class="k">class</span> <span class="nc">MyLegacyMoveTo</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="k">public</span><span class="o">:</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">go</span><span class="p">(</span><span class="n">Point3D</span><span class="w"> </span><span class="n">goal</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;Going to: %f %f %f</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">goal</span><span class="p">.</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">goal</span><span class="p">.</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">goal</span><span class="p">.</span><span class="n">z</span><span class="p">);</span><span class="w"></span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w"> </span><span class="c1">// true means success in my legacy code</span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">};</span><span class="w"></span>
+                <h1 id="how-to-use-multiple-xml-to-store-your-subtrees">How to use multiple XML to store your subtrees</h1>
+<p>In the examples which we presented so far, we always create an entire Tree
+from a single XMl file.</p>
+<p>If multiple Subtrees were used, they were all included into the same XML.</p>
+<p>In recent version of BT.CPP (3.7+), the user can more easily
+load trees from multiple files, if needed.</p>
+<h2 id="using-the-include-tag">Using the \&lt;include> tag</h2>
+<p>We will consider a main tree that invoke 2 different subtrees.</p>
+<p>File <strong>main_tree.xml</strong>:</p>
+<p><div class="highlight"><pre><span></span><code><span class="nt">&lt;root</span> <span class="na">main_tree_to_execute =</span> <span class="s">&quot;MainTree&quot;</span><span class="nt">&gt;</span>
+<span class="hll">    <span class="nt">&lt;include</span> <span class="na">path=</span><span class="s">&quot;./subtree_A.xml&quot;</span> <span class="nt">/&gt;</span>
+</span><span class="hll">    <span class="nt">&lt;include</span> <span class="na">path=</span><span class="s">&quot;./subtree_B.xml&quot;</span> <span class="nt">/&gt;</span>
+</span>    <span class="nt">&lt;BehaviorTree</span> <span class="na">ID=</span><span class="s">&quot;MainTree&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;Sequence&gt;</span>
+            <span class="nt">&lt;SaySomething</span> <span class="na">message=</span><span class="s">&quot;starting MainTree&quot;</span> <span class="nt">/&gt;</span>
+            <span class="nt">&lt;SubTree</span> <span class="na">ID=</span><span class="s">&quot;SubTreeA&quot;</span> <span class="nt">/&gt;</span>
+            <span class="nt">&lt;SubTree</span> <span class="na">ID=</span><span class="s">&quot;SubTreeB&quot;</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;/Sequence&gt;</span>
+    <span class="nt">&lt;/BehaviorTree&gt;</span>
+<span class="nt">&lt;root&gt;</span>
 </code></pre></div>
-<h2 id="c-code">C++ code</h2>
-<p>As usuall, we need to implement the template specialization of <code>convertFromString</code>.</p>
-<div class="highlight"><pre><span></span><code><span class="k">namespace</span><span class="w"> </span><span class="nn">BT</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">template</span><span class="w"> </span><span class="o">&lt;&gt;</span><span class="w"> </span><span class="n">Point3D</span><span class="w"> </span><span class="n">convertFromString</span><span class="p">(</span><span class="n">StringView</span><span class="w"> </span><span class="n">key</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="c1">// three real numbers separated by semicolons</span>
-<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">parts</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BT</span><span class="o">::</span><span class="n">splitString</span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="sc">&#39;;&#39;</span><span class="p">);</span><span class="w"></span>
-<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">parts</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">3</span><span class="p">)</span><span class="w"></span>
-<span class="w">        </span><span class="p">{</span><span class="w"></span>
-<span class="w">            </span><span class="k">throw</span><span class="w"> </span><span class="n">RuntimeError</span><span class="p">(</span><span class="s">&quot;invalid input)&quot;</span><span class="p">);</span><span class="w"></span>
-<span class="w">        </span><span class="p">}</span><span class="w"></span>
-<span class="w">        </span><span class="k">else</span><span class="p">{</span><span class="w"></span>
-<span class="w">            </span><span class="n">Point3D</span><span class="w"> </span><span class="n">output</span><span class="p">;</span><span class="w"></span>
-<span class="w">            </span><span class="n">output</span><span class="p">.</span><span class="n">x</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">convertFromString</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span><span class="w"></span>
-<span class="w">            </span><span class="n">output</span><span class="p">.</span><span class="n">y</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">convertFromString</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span><span class="w"></span>
-<span class="w">            </span><span class="n">output</span><span class="p">.</span><span class="n">z</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">convertFromString</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span><span class="w"></span>
-<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">output</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"> </span><span class="c1">// end anmespace BT</span>
+File <strong>subtree_A.xml</strong>:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;root&gt;</span>
+    <span class="nt">&lt;BehaviorTree</span> <span class="na">ID=</span><span class="s">&quot;SubTreeA&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;SaySomething</span> <span class="na">message=</span><span class="s">&quot;Executing Sub_A&quot;</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/BehaviorTree&gt;</span>
+<span class="nt">&lt;/root&gt;</span>
 </code></pre></div>
-<p>To wrap the method <code>MyLegacyMoveTo::go</code>, we may use a <strong>lambda or std::bind</strong> 
-to create a funtion pointer and <code>SimpleActionNode</code>.</p>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">xml_text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sa">R</span><span class="s">&quot;</span><span class="dl">(</span><span class="s"></span>
-
-<span class="s"> &lt;root&gt;</span>
-<span class="s">     &lt;BehaviorTree&gt;</span>
-<span class="s">        &lt;MoveTo  goal=&quot;-1;3;0.5&quot; /&gt;</span>
-<span class="s">     &lt;/BehaviorTree&gt;</span>
-<span class="s"> &lt;/root&gt;</span>
-<span class="s"> </span><span class="dl">)</span><span class="s">&quot;</span><span class="p">;</span><span class="w"></span>
-
-<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"></span>
+<p>File <strong>subtree_B.xml</strong>:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;root&gt;</span>
+    <span class="nt">&lt;BehaviorTree</span> <span class="na">ID=</span><span class="s">&quot;SubTreeB&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;SaySomething</span> <span class="na">message=</span><span class="s">&quot;Executing Sub_B&quot;</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/BehaviorTree&gt;</span>
+<span class="nt">&lt;/root&gt;</span>
+</code></pre></div>
+<p>As you may notice, we included two relative paths in <strong>main_tree.xml</strong>
+that tells to <code>BehaviorTreeFactory</code> where to find the required dependencies.</p>
+<p>We need to create the tree as usual:</p>
+<div class="highlight"><pre><span></span><code><span class="n">factory</span><span class="p">.</span><span class="n">createTreeFromFile</span><span class="p">(</span><span class="s">&quot;main_tree.xml&quot;</span><span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h2 id="load-multiple-files-without-include">Load multiple files without \&lt;include></h2>
+<p>If we don't want to add relative and hard-coded paths into our XML,
+or if we want to instantiate a subtree instead of the main tree, there is a
+new approach, since BT.CPP 3.7+.</p>
+<p>This process requires few more steps, but offers more flexibility.</p>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"></span>
 <span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">BT</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">BT</span><span class="o">::</span><span class="n">BehaviorTreeFactory</span><span class="w"> </span><span class="n">factory</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">factory</span><span class="p">.</span><span class="n">registerNodeType</span><span class="o">&lt;</span><span class="n">DummyNodes</span><span class="o">::</span><span class="n">SaySomething</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;SaySomething&quot;</span><span class="p">);</span><span class="w"></span>
 
-<span class="w">    </span><span class="n">MyLegacyMoveTo</span><span class="w"> </span><span class="n">move_to</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// Register the behavior tree definitions, but don&#39;t instantiate them, yet.</span>
+<span class="w">    </span><span class="c1">// Order is not important.</span>
+<span class="w">    </span><span class="n">factory</span><span class="p">.</span><span class="n">registerBehaviorTreeFromText</span><span class="p">(</span><span class="s">&quot;main_tree.xml&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">factory</span><span class="p">.</span><span class="n">registerBehaviorTreeFromText</span><span class="p">(</span><span class="s">&quot;subtree_A.xml&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">factory</span><span class="p">.</span><span class="n">registerBehaviorTreeFromText</span><span class="p">(</span><span class="s">&quot;subtree_B.xml&quot;</span><span class="p">);</span><span class="w"></span>
 
-<span class="w">    </span><span class="c1">// Here we use a lambda that captures the reference of move_to</span>
-<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">MoveToWrapperWithLambda</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="o">&amp;</span><span class="n">move_to</span><span class="p">](</span><span class="n">TreeNode</span><span class="o">&amp;</span><span class="w"> </span><span class="n">parent_node</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">NodeStatus</span><span class="w"></span>
+<span class="w">    </span><span class="c1">//Check that the BTs have been registered correctly</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Registered BehaviorTrees:&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">for</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="nl">bt_name</span><span class="p">:</span><span class="w"> </span><span class="n">factory</span><span class="p">.</span><span class="n">registeredBehaviorTrees</span><span class="p">())</span><span class="w"></span>
 <span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="n">Point3D</span><span class="w"> </span><span class="n">goal</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="c1">// thanks to paren_node, you can access easily the input and output ports.</span>
-<span class="w">        </span><span class="n">parent_node</span><span class="p">.</span><span class="n">getInput</span><span class="p">(</span><span class="s">&quot;goal&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">goal</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot; - &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">bt_name</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
 
-<span class="w">        </span><span class="kt">bool</span><span class="w"> </span><span class="n">res</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">move_to</span><span class="p">.</span><span class="n">go</span><span class="p">(</span><span class="w"> </span><span class="n">goal</span><span class="w"> </span><span class="p">);</span><span class="w"></span>
-<span class="w">        </span><span class="c1">// convert bool to NodeStatus</span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">res</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">NodeStatus</span><span class="o">::</span><span class="nl">SUCCESS</span> <span class="p">:</span><span class="w"> </span><span class="n">NodeStatus</span><span class="o">::</span><span class="n">FAILURE</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="p">};</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// You can create the MainTree and the subtrees will be added automatically.</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;----- MainTree tick ----&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">main_tree</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">factory</span><span class="p">.</span><span class="n">createTree</span><span class="p">(</span><span class="s">&quot;MainTree&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">main_tree</span><span class="p">.</span><span class="n">tickRoot</span><span class="p">();</span><span class="w"></span>
 
-<span class="w">    </span><span class="n">BehaviorTreeFactory</span><span class="w"> </span><span class="n">factory</span><span class="p">;</span><span class="w"></span>
-
-<span class="w">    </span><span class="c1">// Register the lambda with BehaviorTreeFactory::registerSimpleAction</span>
-
-<span class="w">    </span><span class="n">PortsList</span><span class="w"> </span><span class="n">ports</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">BT</span><span class="o">::</span><span class="n">InputPort</span><span class="o">&lt;</span><span class="n">Point3D</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;goal&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">};</span><span class="w"></span>
-<span class="w">    </span><span class="n">factory</span><span class="p">.</span><span class="n">registerSimpleAction</span><span class="p">(</span><span class="s">&quot;MoveTo&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">MoveToWrapperWithLambda</span><span class="p">,</span><span class="w"> </span><span class="n">ports</span><span class="w"> </span><span class="p">);</span><span class="w"></span>
-
-<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">tree</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">factory</span><span class="p">.</span><span class="n">createTreeFromText</span><span class="p">(</span><span class="n">xml_text</span><span class="p">);</span><span class="w"></span>
-
-<span class="w">    </span><span class="n">tree</span><span class="p">.</span><span class="n">tickRoot</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// ... or you can create only one of the subtree</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;----- SubA tick ----&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">subA_tree</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">factory</span><span class="p">.</span><span class="n">createTree</span><span class="p">(</span><span class="s">&quot;SubTreeA&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">subA_tree</span><span class="p">.</span><span class="n">tickRoot</span><span class="p">();</span><span class="w"></span>
 
 <span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
-
 <span class="cm">/* Expected output:</span>
 
-<span class="cm">Going to: -1.000000 3.000000 0.500000</span>
-
-<span class="cm">*/</span><span class="w"></span>
+<span class="cm">Registered BehaviorTrees:</span>
+<span class="cm"> - MainTree</span>
+<span class="cm"> - SubTreeA</span>
+<span class="cm"> - SubTreeB</span>
+<span class="cm">----- MainTree tick ----</span>
+<span class="cm">Robot says: starting MainTree</span>
+<span class="cm">Robot says: Executing Sub_A</span>
+<span class="cm">Robot says: Executing Sub_B</span>
+<span class="cm">----- SubA tick ----</span>
+<span class="cm">Robot says: Executing Sub_A</span>
 </code></pre></div>
                 
               

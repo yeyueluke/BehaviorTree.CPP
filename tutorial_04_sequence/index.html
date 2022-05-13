@@ -18,7 +18,7 @@
     
     
       
-        <title>Tutorial 4: Sequences - BehaviorTree.CPP</title>
+        <title>Tutorial 4: Reactive Trees - BehaviorTree.CPP</title>
       
     
     
@@ -69,7 +69,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#sequences-and-asyncactionnode" class="md-skip">
+        <a href="#reactive-sequences-and-asynchronous-nodes" class="md-skip">
           Skip to content
         </a>
       
@@ -100,7 +100,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Tutorial 4: Sequences
+              Tutorial 4: Reactive Trees
             
           </span>
         </div>
@@ -439,12 +439,12 @@
       
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
-          Tutorial 4: Sequences
+          Tutorial 4: Reactive Trees
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
-        Tutorial 4: Sequences
+        Tutorial 4: Reactive Trees
       </a>
       
         
@@ -511,8 +511,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../tutorial_07_legacy/" class="md-nav__link">
-        Tutorial 7: Wrap legacy code
+      <a href="../tutorial_07_multiple_xml/" class="md-nav__link">
+        Tutorial 7: Load from multiple XMLs
       </a>
     </li>
   
@@ -570,14 +570,14 @@
       
       
         <label class="md-nav__link" for="__nav_4">
-          Migration Guide
+          Application Notes
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" aria-label="Migration Guide" data-md-level="1">
+      <nav class="md-nav" aria-label="Application Notes" data-md-level="1">
         <label class="md-nav__title" for="__nav_4">
           <span class="md-nav__icon md-icon"></span>
-          Migration Guide
+          Application Notes
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -587,8 +587,22 @@
   
   
     <li class="md-nav__item">
-      <a href="../MigrationGuide/" class="md-nav__link">
-        Migrate from Version 2.X
+      <a href="../asynchronous_nodes/" class="md-nav__link">
+        Concurrency and Asynchronous Nodes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../example_01_legacy_wrap/" class="md-nav__link">
+        How to Wrap legacy code
       </a>
     </li>
   
@@ -650,12 +664,19 @@
                   </a>
                 
                 
-                <h1 id="sequences-and-asyncactionnode">Sequences and AsyncActionNode</h1>
+                <h1 id="reactive-sequences-and-asynchronous-nodes">Reactive Sequences and Asynchronous Nodes</h1>
 <p>The next example shows the difference between a <code>SequenceNode</code> and a 
 <code>ReactiveSequence</code>.</p>
 <p>An Asynchronous Action has it's own thread. This allows the user to 
 use blocking functions but to return the flow of execution 
 to the tree.</p>
+<div class="admonition warning">
+<p class="admonition-title">Learn more about Asynchronous Actions</p>
+<p>Users should fully understand how Concurrency is achieved in BT.CPP
+and learn best practices about how to develop their own Asynchronous
+Actions. You will find an extensive article 
+<a href="../asynchronous_nodes/">here</a>.</p>
+</div>
 <div class="highlight"><pre><span></span><code><span class="c1">// Custom type</span>
 <span class="k">struct</span> <span class="nc">Pose2D</span><span class="w"></span>
 <span class="p">{</span><span class="w"></span>
