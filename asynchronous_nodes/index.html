@@ -931,7 +931,7 @@ This pattern can still be useful in some case, but you must remember that introd
 <h2 id="advanced-example-client-server-communication">Advanced example: client / server communication</h2>
 <p>Frequently, people using BT.CPP execute the actual task in a different process.</p>
 <p>A typical (and recommended) way to do this in ROS is using <a href="http://wiki.ros.org/actionlib">ActionLib</a>.</p>
-<p>ActionLib provides exactly the kind of API r¡that we need to implement this asynchronous behavior:</p>
+<p>ActionLib provides exactly the kind of API that we need to implement correctly an asynchronous behavior:</p>
 <ol>
 <li>A non-blocking function to start the Action.</li>
 <li>A way to monitor the current state of execution of the Action.</li>
