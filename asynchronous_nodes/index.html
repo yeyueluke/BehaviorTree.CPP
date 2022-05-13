@@ -935,7 +935,7 @@ This pattern can still be useful in some case, but you must remember that introd
 <li>A non-blocking function to start the Action.</li>
 <li>A way to monitor the current state of execution of the Action.</li>
 <li>A way to retrieve the result or the error messages.</li>
-<li>The avility to preempt / abort an action that is being executed.</li>
+<li>The ability to preempt / abort an action that is being executed.</li>
 </ol>
 <p>None of these operations are "blocking", therefore we don't need to spawn our own thread.</p>
 <p>More generally, let's assume that the developer has their own inter-processing communication, with a client/server relationship between the BT executor and the actual service provider.</p>
@@ -971,7 +971,7 @@ This pattern can still be useful in some case, but you must remember that introd
 <span class="w">      </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="c1">// retrieve the result</span>
 <span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">getResult</span><span class="p">();</span><span class="w"></span>
-<span class="w">        </span><span class="c1">// check if this result should be considered &quot;good&quot;</span>
+<span class="w">        </span><span class="c1">// check if this result is &quot;good&quot;</span>
 <span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="w"> </span><span class="n">IsValidResult</span><span class="p">(</span><span class="n">result</span><span class="p">)</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">          </span><span class="k">return</span><span class="w"> </span><span class="n">NodeStatus</span><span class="o">::</span><span class="n">SUCCESS</span><span class="p">;</span><span class="w"></span>
 <span class="w">        </span><span class="p">}</span><span class="w"> </span>
