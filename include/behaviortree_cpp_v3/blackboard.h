@@ -203,6 +203,12 @@ class Blackboard
     {
       return entry_mutex_;
     }
+
+    // EXPERIMENTAL: save values of blackboard to string
+    std::string saveToString() const;
+
+    // EXPERIMENTAL: load values of blackboard to string
+    void loadFromString(const std::string& str);
   
   private:
 

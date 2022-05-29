@@ -313,5 +313,38 @@ Blackboard::Ptr Tree::rootBlackboard()
     return {};
 }
 
+std::string Tree::saveToString() const
+{
+  std::string out;
+  for(const auto& bb: blackboard_stack)
+  {
+    out += bb->saveToString();
+    out += "-----\n";
+  }
+  return out;
+}
+
+void Tree::loadFromString(const std::string &str) const
+{
+  int bb_index = 0;
+  std::istringstream ss(str);
+  std::string line;
+  std::string bb_string;
+
+  //TODO: It would be more efficient to use string::find
+  while (std::getline(ss, line) && bb_index < blackboard_stack.size())
+  {
+    if( line == "-----" )
+    {
+      blackboard_stack[bb_index]->loadFromString( bb_string );
+      bb_index++;
+      bb_string.clear();
+    }
+    else {
+      bb_string += line + "\n";
+    }
+  }
+}
+
 
 }   // end namespace

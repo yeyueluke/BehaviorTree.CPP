@@ -104,6 +104,10 @@ class Any
 
     bool isNumber() const
     {
+        if(_any.empty())
+        {
+            return false;
+        }
         return _any.type() == typeid(int64_t) ||
                _any.type() == typeid(uint64_t) ||
                _any.type() == typeid(double);
@@ -111,6 +115,10 @@ class Any
 
     bool isString() const
     {
+        if(_any.empty())
+        {
+            return false;
+        }
         return _any.type() == typeid(SafeAny::SimpleString);
     }
 

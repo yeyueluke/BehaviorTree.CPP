@@ -214,6 +214,12 @@ public:
 
     Blackboard::Ptr rootBlackboard();
 
+    // EXPERIMENTAL
+    std::string saveToString() const;
+
+    // EXPERIMENTAL
+    void loadFromString(const std::string& str) const;
+
 private:
     std::shared_ptr<WakeUpSignal> wake_up_;
 };

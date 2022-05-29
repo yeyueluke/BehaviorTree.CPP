@@ -86,4 +86,89 @@ std::vector<StringView> Blackboard::getKeys() const
     return out;
 }
 
+std::string Blackboard::saveToString() const
+{
+  std::unique_lock<std::mutex> lock1(mutex_);
+  std::string out;
+  for(const auto& it: storage_)
+  {
+    std::unique_lock<std::mutex> lock2(entry_mutex_);
+    const Entry& entry = it.second;
+    if( entry.value.empty() )
+    {
+        continue;
+    }
+    if( entry.value.isString() )
+    {
+      out += it.first + ": " + entry.value.cast<std::string>() + "\n";
+    }
+    else if( entry.value.type() == typeid(int64_t) )
+    {
+      out += it.first + ": " + std::to_string(entry.value.cast<int64_t>()) + "\n";
+    }
+    else if( entry.value.type() == typeid(uint64_t) )
+    {
+      out += it.first + ": " + std::to_string(entry.value.cast<uint64_t>()) + "\n";
+    }
+    else if( entry.value.type() == typeid(double) )
+    {
+      out += it.first + ": " + std::to_string(entry.value.cast<double>()) + "\n";
+    }
+  }
+  return out;
+}
+
+void Blackboard::loadFromString(const std::string &str)
+{
+  std::istringstream ss(str);
+  std::string line;
+  while (std::getline(ss, line))
+  {
+    std::unique_lock<std::mutex> lock2(entry_mutex_);
+
+    size_t pos = line.find(": ");
+    std::string key = line.substr(0, pos);
+    auto it = storage_.find(key);
+    if( it == storage_.end() )
+    {
+      continue;
+    }
+    std::string value = line.substr(pos + 2);
+
+    Entry& entry = it->second;
+    if( entry.port_info.type() == &typeid(std::string) )
+    {
+      entry.value = Any(value);
+    }
+    else if( entry.port_info.type() == &typeid(int64_t) )
+    {
+      entry.value = Any( convertFromString<int64_t>(value) );
+    }
+    else if( entry.port_info.type() == &typeid(uint64_t) )
+    {
+      entry.value = Any( convertFromString<uint64_t>(value) );
+    }
+    else if( entry.port_info.type() == &typeid(float) )
+    {
+      entry.value = Any( convertFromString<float>(value) );
+    }
+    else if( entry.port_info.type() == &typeid(int) )
+    {
+      entry.value = Any( convertFromString<int>(value) );
+    }
+    else if( entry.port_info.type() == &typeid(unsigned) )
+    {
+      entry.value = Any( convertFromString<unsigned>(value) );
+    }
+    else if( entry.port_info.type() == &typeid(bool) )
+    {
+      entry.value = Any( convertFromString<bool>(value) );
+    }
+    else if( entry.port_info.type() == &typeid(NodeStatus) )
+    {
+      entry.value = Any( convertFromString<NodeStatus>(value) );
+    }
+  }
+}
+
 }
