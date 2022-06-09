@@ -6,6 +6,7 @@ copyright: 'Copyright &copy; 2018-2022 Davide Faconti, Eurecat'
 
 theme:
   name: 'material'
+  custom_dir: docs/overrides
   language: en
   logo: 'images/BT.png'
   feature:
