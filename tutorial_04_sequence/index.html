@@ -50,6 +50,8 @@
 
     
     
+    <script async defer data-website-id="bb558d85-69ac-4b8f-82b9-c2991512d4c2" src="https://quirky-gharial.pikapod.net/umami.js"></script>
+
   </head>
   
   
@@ -468,6 +470,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#event-driven-trees" class="md-nav__link">
+    Event Driven trees?
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -647,6 +656,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#event-driven-trees" class="md-nav__link">
+    Event Driven trees?
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -724,11 +740,11 @@ Actions. You will find an extensive article
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">    </span><span class="c1">// Pretend that &quot;computing&quot; takes 250 milliseconds.</span>
-<span class="w">    </span><span class="c1">// It is up to you to check periodicall _halt_requested and interrupt</span>
+<span class="w">    </span><span class="c1">// It is up to you to check periodically _halt_requested and interrupt</span>
 <span class="w">    </span><span class="c1">// this tick() if it is true.</span>
 <span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">_halt_requested</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">count</span><span class="o">++</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">25</span><span class="p">)</span><span class="w"></span>
 <span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="n">SleepMS</span><span class="p">(</span><span class="mi">10</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">this_thread</span><span class="o">::</span><span class="n">sleep_for</span><span class="p">(</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">milliseconds</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="w"> </span><span class="p">);</span><span class="w"></span>
 <span class="w">    </span><span class="p">}</span><span class="w"></span>
 
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;[ MoveBase: FINISHED ]&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
@@ -756,6 +772,7 @@ as shown in the previous tutorial.</p>
 <div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"></span>
 <span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">DummyNodes</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">using</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">milliseconds</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">    </span><span class="n">BehaviorTreeFactory</span><span class="w"> </span><span class="n">factory</span><span class="p">;</span><span class="w"></span>
 <span class="w">    </span><span class="n">factory</span><span class="p">.</span><span class="n">registerSimpleCondition</span><span class="p">(</span><span class="s">&quot;BatteryOK&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">bind</span><span class="p">(</span><span class="n">CheckBattery</span><span class="p">));</span><span class="w"></span>
@@ -769,11 +786,11 @@ as shown in the previous tutorial.</p>
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;</span><span class="se">\n</span><span class="s">--- 1st executeTick() ---&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
 <span class="w">    </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tree</span><span class="p">.</span><span class="n">tickRoot</span><span class="p">();</span><span class="w"></span>
 
-<span class="w">    </span><span class="n">SleepMS</span><span class="p">(</span><span class="mi">150</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">tree</span><span class="p">.</span><span class="n">sleep</span><span class="p">(</span><span class="w"> </span><span class="n">milliseconds</span><span class="p">(</span><span class="mi">150</span><span class="p">)</span><span class="w"> </span><span class="p">);</span><span class="w"></span>
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;</span><span class="se">\n</span><span class="s">--- 2nd executeTick() ---&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
 <span class="w">    </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tree</span><span class="p">.</span><span class="n">tickRoot</span><span class="p">();</span><span class="w"></span>
 
-<span class="w">    </span><span class="n">SleepMS</span><span class="p">(</span><span class="mi">150</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">tree</span><span class="p">.</span><span class="n">sleep</span><span class="p">(</span><span class="w"> </span><span class="n">milliseconds</span><span class="p">(</span><span class="mi">150</span><span class="p">)</span><span class="w"> </span><span class="p">);</span><span class="w"></span>
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;</span><span class="se">\n</span><span class="s">--- 3rd executeTick() ---&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
 <span class="w">    </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tree</span><span class="p">.</span><span class="n">tickRoot</span><span class="p">();</span><span class="w"></span>
 
@@ -828,6 +845,15 @@ would be <em>interrupted</em> (<em>halted</em>, to be specific).</p>
     [ Battery: OK ]
     Robot says: &quot;mission completed!&quot;
 </code></pre></div>
+<h2 id="event-driven-trees">Event Driven trees?</h2>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>We used the command <code>tree.sleep()</code> instead of <code>std::this_thread::sleep_for()</code> for a reason.</p>
+</div>
+<p>The method <code>Tree::sleep()</code> should be preferred, because it can be interrupted by a Node in the tree when
+"something changed".
+Tree::sleep() will be interrupted when an <code>AsyncActionNode::tick()</code> is completed or, more generally,
+when the method <code>TreeNode::emitStateChanged()</code> is invoked.</p>
                 
               
               

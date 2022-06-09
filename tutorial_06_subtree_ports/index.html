@@ -50,6 +50,8 @@
 
     
     
+    <script async defer data-website-id="bb558d85-69ac-4b8f-82b9-c2991512d4c2" src="https://quirky-gharial.pikapod.net/umami.js"></script>
+
   </head>
   
   
@@ -729,7 +731,9 @@ information about the current state of a blackboard with the method <code>debugM
 <span class="w">    </span><span class="k">while</span><span class="p">(</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">NodeStatus</span><span class="o">::</span><span class="n">RUNNING</span><span class="p">)</span><span class="w"></span>
 <span class="w">    </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tree</span><span class="p">.</span><span class="n">tickRoot</span><span class="p">();</span><span class="w"></span>
-<span class="w">        </span><span class="n">SleepMS</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span><span class="w">   </span><span class="c1">// optional sleep to avoid &quot;busy loops&quot;</span>
+<span class="w">        </span><span class="c1">// IMPORTANT: add sleep to avoid busy loops.</span>
+<span class="w">        </span><span class="c1">// You should use Tree::sleep(). Don&#39;t be afraid to run this at 1 KHz.</span>
+<span class="w">        </span><span class="n">tree</span><span class="p">.</span><span class="n">sleep</span><span class="p">(</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">milliseconds</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="p">);</span><span class="w"></span>
 <span class="w">    </span><span class="p">}</span><span class="w"></span>
 
 <span class="w">    </span><span class="c1">// let&#39;s visualize some information about the current state of the blackboards.</span>
