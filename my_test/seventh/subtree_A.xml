@@ -1,0 +1,5 @@
+<root  BTCPP_format="4"  main_tree_to_execute = "SubTreeA">
+    <BehaviorTree ID="SubTreeA">
+        <SaySomething message="Executing Sub_A" />
+    </BehaviorTree>
+</root>
